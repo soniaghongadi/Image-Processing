@@ -1,0 +1,23 @@
+version: 0.2
+phases:
+  pre_build: 
+    commands:
+      - echo "Completed pre_build"
+  build:
+    commands:
+      - echo "Starting build"
+      - pip install -r requirements.txt
+      - echo "Build complete"
+  post_build:
+    commands:
+      - echo "Enteredin post-build phase"
+artifacts:
+  files:
+    - app.py
+    - app.yaml
+    - appengine_config.py
+    - core.py
+    - test.py
+    - requirements.txt
+    - templates/*
+    - static/*
