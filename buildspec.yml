@@ -13,7 +13,7 @@ phases:
       - echo "Enteredin post-build phase"
 artifacts:
   files:
-    - app.py
+    - application.py
     - app.yaml
     - appengine_config.py
     - core.py
