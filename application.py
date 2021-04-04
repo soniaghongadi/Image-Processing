@@ -6,7 +6,7 @@ import os
 from PIL import Image
 
 # initilization of flask app
-app = Flask(__name__)
+application = app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
