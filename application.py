@@ -1,23 +1,55 @@
 # A web application for image manipulation and text extraction from embedded images
 
-#imported libraries 
-from flask import Flask, request, render_template, send_from_directory
+# imported libraries
+from flask import Flask, request, render_template, send_from_directory, flash, redirect, url_for, session, logging, request
+from flask_wtf.csrf import CSRFProtect
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from PIL import Image
-
+from flask_sqlalchemy import SQLAlchemy
+import boto3
+from boto3.dynamodb.conditions import Key, Attr
 # initilization of flask app
 application = app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+app.config['SECRET_KEY'] = 'sonia-ghongadi-top-secrete'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+csrf = CSRFProtect()
+csrf.init_app(app)
+
+STAGE = None
+if 'STAGE_LOCATION' in os.environ:
+    # can be either empty or set to ELASTICBEANSTALK
+    STAGE = os.environ['STAGE_LOCATION']
 
 
+dynamodb_resource = boto3.resource('dynamodb',region_name='us-east-1')
+table = dynamodb_resource.Table('userdata')
+table_product = dynamodb_resource.Table('Product')
+REGISTER_PAGE = 'register.html' 
+ADDPRODUCT_PAGE = 'addproduct.html'
+
+# Sets local vs global config 
+def isLocal():
+    if STAGE:
+        print('SoniaDebug: this is elastic beanstalk env')
+        return False
+    print('SoniaDebug: this is local env we will use sqlite for logins')
+    return True
+
+
+isLocal()
 # Image manipulation page
+
+
 @app.route("/")
 def main():
+    isLocal()
     return render_template('index.html')
 
 
-# upload an image and save it to local directory 
+# upload an image and save it to local directory
 @app.route("/upload", methods=["POST"])
 def upload():
     target = os.path.join(APP_ROOT, 'static/images/')
@@ -140,7 +172,7 @@ def crop():
     # crop image and show
     if crop_possible:
         img = img.crop((x1, y1, x2, y2))
-        
+
         # save and return image
         destination = "/".join([target, 'temp.png'])
         if os.path.isfile(destination):
@@ -182,7 +214,7 @@ def blend():
     # blend and show image
     img = Image.blend(img1, img2, float(alpha)/100)
 
-     # save and return image
+    # save and return image
     destination = "/".join([target, 'temp.png'])
     if os.path.isfile(destination):
         os.remove(destination)
@@ -197,6 +229,43 @@ def send_image(filename):
     return send_from_directory("static/images", filename)
 
 
+# Route to registration page to add a new user
+@app.route('/register', methods=["GET", "POST"])
+def register():
+    # Look for a session value
+    if 'user_email' in session:
+        return redirect(url_for('show_all'))
+    session.pop('_flashes', None)
+
+    # Validation on user's details
+    if request.method == "POST":
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        email = request.form['email']
+        password = request.form['password']
+
+        if not request.form['firstname'] or not request.form['lastname'] or not request.form['email'] or not request.form['password']:
+            flash('Please enter all the fields')
+            return render_template(REGISTER_PAGE)
+        else:
+            # Add to database
+            response = table.query(
+                KeyConditionExpression=Key('email').eq(email))
+            abc_array = []
+
+            if response['Items']:
+                flash('Email is already taken, please select a new one')
+                return render_template(REGISTER_PAGE)
+
+            hash_pass = generate_password_hash(password)
+            table.put_item(Item={'firstname': firstname,
+                                 'lastname': lastname,
+                                 'email': email,
+                                 'password': hash_pass})
+
+        return redirect(url_for('login'))
+    return render_template(REGISTER_PAGE)
+
+
 if __name__ == "__main__":
     app.run()
-

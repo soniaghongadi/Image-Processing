@@ -1,0 +1,96 @@
+<!-- User Registration form -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename ='style.css') }}">
+    <title>Register</title>
+</head>
+
+<body>
+    <div class="cont">
+        <div class="demo">
+            <div class="login">
+                <div class="login__check"></div>
+                <form action="{{ request.path }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <div class="login__form">
+
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="error_flash">
+                                        {{message}}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        <div class="login__row">
+
+                            <input type="text" class="login__input name" placeholder="Firstame" name="firstname"
+                                required />
+                        </div>
+                        
+                         <div class="login__row">
+
+                            <input type="text" class="login__input name" placeholder="Lastname" name="lastname"
+                                required />
+                        </div>
+                        <div class="login__row">
+
+                            <input type="email" class="login__input pass" placeholder="Email ID" name="email"
+                            required />
+
+                        </div>
+                        <div class="login__row">
+
+                            <input type="password" class="login__input pass" placeholder="Password" name="password" id="password_field"
+                                required />
+                            <input class="generate__button" id="passwordGenerateButton"
+                                type="button"
+                                value="Generate">
+                            <input class="generate__button" id="showPasswordButton"
+                                type="button"
+                                value="Show">
+
+                        </div>
+                        <input type="submit" class="login__submit" value ="Register">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        function toggleVisiblity(){
+            inputField = '#password_field'
+            // get the attribute value
+            var type = $(inputField).attr("type"); 
+            // now test it's value
+            if( type === 'password' ){
+              $(inputField).attr("type", "text");
+            }else{
+              $(inputField).attr("type", "password");
+            } 
+        }
+        $('#passwordGenerateButton').click(function(){
+            $.get( "/generate_password", function( data ) {
+              console.log(data);
+              $('#password_field').val(data);
+            });
+        });
+        $("#showPasswordButton").mousedown(function(){
+          toggleVisiblity();
+        });
+        $("#showPasswordButton").mouseup(function(){
+          toggleVisiblity();
+        });
+    });
+    </script>
+</body>
+
+</html>
