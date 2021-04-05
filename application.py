@@ -27,7 +27,7 @@ if 'STAGE_LOCATION' in os.environ:
 dynamodb_resource = boto3.resource('dynamodb',region_name='us-east-1')
 table = dynamodb_resource.Table('userdata')
 table_product = dynamodb_resource.Table('Product')
-REGISTER_PAGE = 'register.html' 
+REGISTER_PAGE = 'signup.html' 
 ADDPRODUCT_PAGE = 'addproduct.html'
 
 # Sets local vs global config 
@@ -263,9 +263,37 @@ def register():
                                  'email': email,
                                  'password': hash_pass})
 
-        return redirect(url_for('login'))
+        return redirect(url_for('main'))
     return render_template(REGISTER_PAGE)
+    
+@app.route("/login",methods=["GET","POST"])
+def login():
+    # Look for a session value
+    if 'user_email' in session:
+        return redirect(url_for('show_all'))
+    
+    # Validation for user's email and password 
+    if request.method == "POST":
+        email = request.form['email']
+        password = request.form['password']
+        table = dynamodb_resource.Table('userdata')
+        response = table.query(
+                KeyConditionExpression=Key('email').eq(email))
+        print(response['Items'][0]['password'])
+        if not response or not check_password_hash(response['Items'][0]['password'],request.form['password']):
+            flash('Invalid username or password')
+            return render_template('index.html')
+    
+        session['user_email'] = request.form['email']
+        return redirect(url_for('show_all'))
+    return render_template('index.html')
+    
+# Route to logput page
+@app.route('/logout')
+def logout():
+    session.pop('user_email', None)
+    return redirect(url_for('index'))
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', debug=True)

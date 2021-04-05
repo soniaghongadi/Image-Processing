@@ -1,23 +1,10 @@
-<!-- User Registration form -->
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename ='style.css') }}">
-    <title>Register</title>
-</head>
-
-<body>
-    <div class="cont">
-        <div class="column is-4 is-offset-4">
-
-        <div class="demo">
-            <div class="login">
-                <div class="login__check"></div>
-                <form action="{{ request.path }}" method="POST">
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Sign Up</h3>
+    <div class="box">
+        <form action="{{ request.path }}" method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="login__form">
 
@@ -30,11 +17,6 @@
                                 {% endfor %}
                             {% endif %}
                         {% endwith %}
-                         <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="email" name="email" placeholder="Your Email" autofocus="">
-                </div>
-            </div>
                         <div class="login__row">
 
                             <input type="text" class="login__input name" placeholder="Firstame" name="firstname"
@@ -46,6 +28,12 @@
                             <input type="text" class="login__input name" placeholder="Lastname" name="lastname"
                                 required />
                         </div>
+                                    <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="email" name="email" placeholder="Your Email" autofocus="">
+                </div>
+            </div>
+
                         <div class="login__row">
 
                             <input type="password" class="login__input pass" placeholder="Password" name="password" id="password_field"
@@ -61,38 +49,6 @@
                         <input type="submit" class="login__submit" value ="Register">
                     </div>
                 </form>
-            </div>
-        </div>
-        </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-    $(document).ready(function() {
-        function toggleVisiblity(){
-            inputField = '#password_field'
-            // get the attribute value
-            var type = $(inputField).attr("type"); 
-            // now test it's value
-            if( type === 'password' ){
-              $(inputField).attr("type", "text");
-            }else{
-              $(inputField).attr("type", "password");
-            } 
-        }
-        $('#passwordGenerateButton').click(function(){
-            $.get( "/generate_password", function( data ) {
-              console.log(data);
-              $('#password_field').val(data);
-            });
-        });
-        $("#showPasswordButton").mousedown(function(){
-          toggleVisiblity();
-        });
-        $("#showPasswordButton").mouseup(function(){
-          toggleVisiblity();
-        });
-    });
-    </script>
-</body>
-
-</html>
+</div>
+{% endblock %}
