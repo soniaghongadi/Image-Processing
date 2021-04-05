@@ -1,37 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
- 
-<head>
-    <title>Python Flask Image Manipulation App</title>
- 
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
- 
-    <link href="../static/jumbotron-narrow.css" rel="stylesheet">
-
-    <link href="../static/style.css" rel="stylesheet">
- 
- 
-</head>
- 
-<body>
+{% extends "base.html" %}
+{% block content %}
  
     <div class="container">
-        <div class="header">
-            <nav>
-                <ul class="nav nav-pills pull-right">
-                    <li role="presentation" class="active btn"><a href="#">Home</a>
-                    </li>
-                    <li role="presentation" class="btn"><a href="https://github.com/gxercavins">gxercavins</a>
-                    </li>
-                </ul>
-            </nav>
-            <h3 class="text-muted">Python Flask Image Manipulation App</h3>
-        </div>
  
         <div class="jumbotron">
             <h1>Upload your image</h1>
             <p class="lead"></p>
 	       <form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
             <input id="file-picker" type="file" name="file" accept="image/*" class="hidden" onchange="this.form.submit()">
             <label for="file-picker" class="btn btn-lg btn-success">Select file</label>
 		 </form>
@@ -62,7 +39,5 @@
         </footer>
  
     </div>
-</body>
- 
-</html>
 
+{% endblock %}

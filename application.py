@@ -44,9 +44,16 @@ isLocal()
 
 
 @app.route("/")
-def main():
+def index():
     isLocal()
-    return render_template('index.html')
+    if 'user_email' in session:
+        return render_template('index.html')
+    return redirect(url_for('intro'))
+    
+@app.route("/intro")
+def intro():
+    isLocal()
+    return render_template('intro.html')
 
 
 # upload an image and save it to local directory
@@ -262,15 +269,15 @@ def register():
                                  'lastname': lastname,
                                  'email': email,
                                  'password': hash_pass})
-
-        return redirect(url_for('main'))
+            session['user_email'] = email
+        return redirect(url_for('index'))
     return render_template(REGISTER_PAGE)
     
 @app.route("/login",methods=["GET","POST"])
 def login():
     # Look for a session value
     if 'user_email' in session:
-        return redirect(url_for('show_all'))
+        return redirect(url_for('index'))
     
     # Validation for user's email and password 
     if request.method == "POST":
@@ -282,17 +289,17 @@ def login():
         print(response['Items'][0]['password'])
         if not response or not check_password_hash(response['Items'][0]['password'],request.form['password']):
             flash('Invalid username or password')
-            return render_template('index.html')
+            return render_template('login.html')
     
         session['user_email'] = request.form['email']
-        return redirect(url_for('show_all'))
-    return render_template('index.html')
+        return redirect(url_for('index'))
+    return render_template('login.html')
     
 # Route to logput page
 @app.route('/logout')
 def logout():
     session.pop('user_email', None)
-    return redirect(url_for('index'))
+    return redirect(url_for('intro'))
 
 
 if __name__ == "__main__":

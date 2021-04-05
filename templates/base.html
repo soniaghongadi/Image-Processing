@@ -7,6 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Flask Auth Example</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+     
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+ 
+    <link href="../static/jumbotron-narrow.css" rel="stylesheet">
+
+    <link href="../static/style.css" rel="stylesheet">
+ 
 </head>
 
 <body>
@@ -18,18 +25,25 @@
 
                     <div id="navbarMenuHeroA" class="navbar-menu">
                         <div class="navbar-end">
-                            <a href="{{ url_for('main') }}" class="navbar-item">
+                            {% if session['user_email'] %}
+                            <a class="navbar-item">Hello, {% print(session['user_email']) %}</a>
+                            {% endif %}
+
+                            <a href="{{ url_for('index') }}" class="navbar-item">
                                 Home
                             </a>
+                            {% if not session['user_email'] %}
                             <a href="{{ url_for('login') }}" class="navbar-item">
                                 Login
                             </a>
                             <a href="{{ url_for('register') }}" class="navbar-item">
                                 Sign Up
                             </a>
+                            {% else %}
                             <a href="{{ url_for('logout') }}" class="navbar-item">
                                 Logout
                             </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -43,6 +57,15 @@
             </div>
         </div>
     </section>
+    
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>
+        <strong>Bulma - Blog theme</strong> by <a href="https://gonzalojs.com">Gonzalo Gutierrez</a>. Based on the <a href="http://jigsaw-blog-staging.tighten.co/">jigsaw-blog</a>. The source code is licensed
+        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>
+      </p>
+    </div>
+  </footer>
 </body>
 
 </html>
