@@ -14,6 +14,7 @@ phases:
 artifacts:
   files:
     - application.py
+    - *.py
     - app.yaml
     - appengine_config.py
     - core.py

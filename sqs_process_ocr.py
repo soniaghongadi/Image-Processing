@@ -33,10 +33,7 @@ def processOCRQueue():
     # Get the queue
     queue = sqs.get_queue_by_name(QueueName='OCRQueue.fifo')
     # Process messages by printing out body and optional author name
-    counter = 0 
     while(True):
-        counter +=1
-        print('Checking for new message', counter)
         for message in queue.receive_messages(MessageAttributeNames=['Author']):
             print('new message available')
             # Get the custom author message attribute if it was set
