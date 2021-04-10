@@ -9,6 +9,12 @@ from PIL import Image
 from flask_sqlalchemy import SQLAlchemy
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
+from threading import Thread
+from time import sleep
+from sqs_process_ocr import processOCRQueue
+from threading import Thread
+
+
 # initilization of flask app
 application = app = Flask(__name__)
 
@@ -41,7 +47,8 @@ def isLocal():
 
 isLocal()
 # Image manipulation page
-
+thread = Thread(target = processOCRQueue)
+thread.start()
 
 @app.route("/")
 def index():
