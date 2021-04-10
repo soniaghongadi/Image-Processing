@@ -13,7 +13,8 @@ from threading import Thread
 from time import sleep
 from sqs_process_ocr import processOCRQueue
 from threading import Thread
-
+import uuid
+from s3_helper import S3Utils
 
 # initilization of flask app
 application = app = Flask(__name__)
@@ -32,9 +33,13 @@ if 'STAGE_LOCATION' in os.environ:
 
 dynamodb_resource = boto3.resource('dynamodb',region_name='us-east-1')
 table = dynamodb_resource.Table('userdata')
-table_product = dynamodb_resource.Table('Product')
+ocr_table = dynamodb_resource.Table('OCR')
 REGISTER_PAGE = 'signup.html' 
-ADDPRODUCT_PAGE = 'addproduct.html'
+# S3 functionality
+UPLOAD_FOLDER = "uploads"
+BUCKET = "image-processing-sonia"
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+S3Utils.create_bucket(BUCKET)
 
 # Sets local vs global config 
 def isLocal():
@@ -88,7 +93,16 @@ def upload():
     destination = "/".join([target, filename])
     print("File saved to to:", destination)
     upload.save(destination)
-
+    imageID= uuid.uuid4().hex
+    object_url = S3Utils.upload_file(BUCKET, destination, upload.filename)
+    # add to queue
+    # Add a record in dynamo db 
+    ocr_table.put_item(Item= {
+        'imageTag': imageID,
+        'imageURL':object_url, 
+        'status': 'In queue', 
+        'text': ''
+    })
     # forward to processing page
     return render_template("processing.html", image_name=filename)
 

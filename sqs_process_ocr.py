@@ -1,16 +1,44 @@
 import boto3 
 from time import sleep
 
+def detect_text_uri(uri):
+    """Detects text in the file located in Google Cloud Storage or on the Web.
+    """
+    from google.cloud import vision
+    client = vision.ImageAnnotatorClient()
+    image = vision.Image()
+    image.source.image_uri = uri
+
+    response = client.text_detection(image=image)
+    texts = response.text_annotations
+    print('Texts:')
+
+    for text in texts:
+        print('\n"{}"'.format(text.description))
+
+        vertices = (['({},{})'.format(vertex.x, vertex.y)
+                    for vertex in text.bounding_poly.vertices])
+
+        print('bounds: {}'.format(','.join(vertices)))
+
+    if response.error.message:
+        raise Exception(
+            '{}\nFor more info on error messages, check: '
+            'https://cloud.google.com/apis/design/errors'.format(
+                response.error.message))
+
 def processOCRQueue():
     # Get the service resource
     sqs = boto3.resource('sqs')
     # Get the queue
     queue = sqs.get_queue_by_name(QueueName='OCRQueue.fifo')
     # Process messages by printing out body and optional author name
-    counter = 1 
+    counter = 0 
     while(True):
-        print('looking for new message')
+        counter +=1
+        print('Checking for new message', counter)
         for message in queue.receive_messages(MessageAttributeNames=['Author']):
+            print('new message available')
             # Get the custom author message attribute if it was set
             author_text = ''
             if message.message_attributes is not None:
@@ -23,6 +51,4 @@ def processOCRQueue():
         
             # Let the queue know that the message is processed
             message.delete()
-        print('Sleeping the Processor Queue', counter)
-        counter +=1
         sleep(1)
