@@ -72,13 +72,26 @@ def isLocal():
     return True
 
 
-
+class OCRItem:
+  def __init__(self, imageTag, imageURL, status, extracted_text):
+    self.imageTag = imageTag
+    self.imageURL = imageURL
+    self.status = status
+    self.extracted_text = extracted_text
 
 @app.route("/")
 def index():
     isLocal()
     if 'user_email' in session:
-        return render_template('index.html')
+        db_result = ocr_table.scan(
+            FilterExpression=Attr("owner").eq(session['user_email'])
+        )
+        items = db_result['Items']
+        ocrqueue = [];
+        for item in items:
+            imageTag = OCRItem(item['imageTag'], item['imageURL'], item['status'], item['text']);
+            ocrqueue.append(imageTag)
+        return render_template('index.html', ocrqueue = ocrqueue)
     return redirect(url_for('intro'))
     
 @app.route("/intro")
@@ -112,27 +125,42 @@ def upload():
     destination = "/".join([target, filename])
     print("File saved to to:", destination)
     upload.save(destination)
+    
+    
+    # forward to processing page
+    return render_template("processing.html", image_name=filename, )
+
+@app.route("/addocr", methods=["GET"])
+def addocr():
+    # retrieve parameters from html form
+    filename = request.args.get('image')
+    # open and process image
+    target = os.path.join(APP_ROOT, 'static/images')
+    destination = "/".join([target, filename])
+    
     imageID= uuid.uuid4().hex
-    object_url = S3Utils.upload_file(BUCKET, destination, upload.filename)
+    object_url = S3Utils.upload_file(BUCKET, destination, filename)
     # add to queue
     sqs = boto3.resource('sqs', region_name='us-east-1')
     # Get the queue
     queue = sqs.get_queue_by_name(QueueName='OCRQueue.fifo')
     data = {
         'imageTag': imageID,
-        'imageURL':object_url
+        'imageURL':object_url,
+        'owner': session['user_email'],
     }
     queue.send_message(MessageBody=json.dumps(data),MessageGroupId='SimpleOCRGroup', MessageDeduplicationId=uuid.uuid4().hex)
+    
     # Add a record in dynamo db 
     ocr_table.put_item(Item= {
         'imageTag': imageID,
         'imageURL':object_url, 
         'status': 'In queue', 
+        'owner': session['user_email'],
         'text': ''
     })
-    # forward to processing page
-    return render_template("processing.html", image_name=filename)
 
+    return redirect(url_for('index'))
 
 # rotate the image to the specified degrees
 @app.route("/rotate", methods=["POST"])

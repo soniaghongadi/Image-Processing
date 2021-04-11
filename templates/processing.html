@@ -60,10 +60,47 @@
                   <input type="text" class="hidden" name="image" value="{{ image_name }}">
                </form>
             </div>
+            <br>
+            <div class="col-lg-3">
+               <button id="btnBlend_ocr" class="btn btn-lg btn-success" x-data="{{ image_name }}" onclick="addToOCR()">Add to OCR Queue</button>
+            </div>
          </div>
+         <section class="section">
+             <h3>OCR Queue</h3>
+        <table class="table">
+              <thead>
+                <tr>
+                  <th><abbr title="Position">ImageTag</abbr></th>
+                  <th>Image URL </th>
+                  <th>Status </th>
+                  <th>Extracted Text </th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for item in ocrqueue %}
+                <tr>
+                  <th>{{ item.imageTag }}</th>
+                  <td>{{ item.imageURL }}</td>
+                  <td>{{ item.status }}</td>
+                  <td>{{ item.extracted_text }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+          </table>
          <footer class="footer">
             <p>&copy; gxercavins 2017. Using Python, Flask and PIL.</p>
          </footer>
       </div>
+      <script type="text/javascript">
+         function addToOCR(){
+            var image = document.getElementById("btnBlend_ocr").getAttribute("x-data");
+            fetch(`/addocr?image=${image}`)
+              .then(response => {
+                 alert('Image submitted for OCR');
+                 window.location = '/';
+              })
+              .then(data => console.log(data));
+         }
+      </script>
    </body>
 </html>

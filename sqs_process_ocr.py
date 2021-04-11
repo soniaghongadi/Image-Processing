@@ -75,7 +75,8 @@ def processOCRQueue(queue_name):
                 'imageTag': message_body['imageTag'],
                 'imageURL':message_body['imageURL'], 
                 'status': 'Completed', 
-                'text': extracted_text
+                'text': extracted_text,
+                'owner': message_body['owner'],
             })
             print('::::{}::::',extracted_text)
             print('message is written succesfully')

@@ -13,7 +13,29 @@
             <label for="file-picker" class="btn btn-lg btn-success">Select file</label>
 		 </form>
         </div>
- 
+         <section class="section">
+             <h3>OCR Queue</h3>
+        <table class="table">
+              <thead>
+                <tr>
+                  <th><abbr title="Position">ImageTag</abbr></th>
+                  <th>Image URL </th>
+                  <th>Status </th>
+                  <th>Extracted Text </th>
+                </tr>
+              </thead>
+              <tbody>
+               {% for item in ocrqueue %}
+                <tr>
+                  <th>{{ item.imageTag }}</th>
+                  <td>{{ item.imageURL }}</td>
+                  <td>{{ item.status }}</td>
+                  <td>{{ item.extracted_text }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+          </table>
+        </section>
         <div class="row marketing">
             <div class="col-lg-6">
                 <h4>Flip</h4>
