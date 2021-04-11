@@ -2,6 +2,7 @@
 
 # imported libraries
 from flask import Flask, request, render_template, send_from_directory, flash, redirect, url_for, session, logging, request
+from flask_restful import Resource, Api
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -18,6 +19,14 @@ from s3_helper import S3Utils
 import json
 # initilization of flask app
 application = app = Flask(__name__)
+
+api = Api(application)
+
+class CropImage(Resource):
+    def get(self):
+        return {'hello': 'world'}
+
+api.add_resource(CropImage, '/crop')
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app.config['SECRET_KEY'] = 'sonia-ghongadi-top-secrete'
@@ -96,7 +105,7 @@ def upload():
     imageID= uuid.uuid4().hex
     object_url = S3Utils.upload_file(BUCKET, destination, upload.filename)
     # add to queue
-    sqs = boto3.resource('sqs')
+    sqs = boto3.resource('sqs', region_name='us-east-1')
     # Get the queue
     queue = sqs.get_queue_by_name(QueueName='OCRQueue.fifo')
     data = {

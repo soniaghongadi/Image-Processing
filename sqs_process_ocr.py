@@ -29,7 +29,7 @@ def detect_text_uri(uri):
 
 def processOCRQueue():
     # Get the service resource
-    sqs = boto3.resource('sqs')
+    sqs = boto3.resource('sqs',  region_name='us-east-1')
     # Get the queue
     queue = sqs.get_queue_by_name(QueueName='OCRQueue.fifo')
     # Process messages by printing out body and optional author name
