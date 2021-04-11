@@ -15,7 +15,7 @@ from sqs_process_ocr import processOCRQueue
 from threading import Thread
 import uuid
 from s3_helper import S3Utils
-
+import json
 # initilization of flask app
 application = app = Flask(__name__)
 
@@ -96,6 +96,14 @@ def upload():
     imageID= uuid.uuid4().hex
     object_url = S3Utils.upload_file(BUCKET, destination, upload.filename)
     # add to queue
+    sqs = boto3.resource('sqs')
+    # Get the queue
+    queue = sqs.get_queue_by_name(QueueName='OCRQueue.fifo')
+    data = {
+        'imageTag': imageID,
+        'imageURL':object_url
+    }
+    queue.send_message(MessageBody=json.dumps(data),MessageGroupId='SimpleOCRGroup', MessageDeduplicationId=uuid.uuid4().hex)
     # Add a record in dynamo db 
     ocr_table.put_item(Item= {
         'imageTag': imageID,
