@@ -62,6 +62,6 @@ def get_secret():
             decoded_binary_secret = base64.b64decode(get_secret_value_response['SecretBinary'])
         
         with io.open('creds.json', 'w', encoding='utf8') as outfile:
-            print(secret)
             outfile.write(to_unicode(secret))
+            print('wrote creds file locally')
 

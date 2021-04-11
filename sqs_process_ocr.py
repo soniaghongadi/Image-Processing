@@ -9,7 +9,7 @@ def detect_text_uri(uri, credentials):
     """Detects text in the file located in Google Cloud Storage or on the Web.
     """
     from google.cloud import vision
-    client = vision.ImageAnnotatorClient()
+    client = vision.ImageAnnotatorClient(credentials=credentials)
     image = vision.Image()
     image.source.image_uri = uri
 
