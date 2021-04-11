@@ -14,6 +14,7 @@ phases:
 artifacts:
   files:
     - application.py
+    - credential_helper.py
     - s3_helper.py
     - sqs_process_ocr.py
     - app.yaml

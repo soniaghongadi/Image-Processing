@@ -10,17 +10,21 @@ from PIL import Image
 from flask_sqlalchemy import SQLAlchemy
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
-from threading import Thread
 from time import sleep
 from sqs_process_ocr import processOCRQueue
 from threading import Thread
 import uuid
 from s3_helper import S3Utils
 import json
-# initilization of flask app
+import atexit
+from credential_helper import get_secret 
+
+
+
 application = app = Flask(__name__)
 
 api = Api(application)
+
 
 class CropImage(Resource):
     def get(self):
@@ -50,19 +54,25 @@ BUCKET = "image-processing-sonia"
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 S3Utils.create_bucket(BUCKET)
 
+SQSQueue = 'OCRQueue.fifo'
+get_secret()
+thread = Thread(target=processOCRQueue, args=[SQSQueue])
+thread.start()
+
 # Sets local vs global config 
 def isLocal():
+    global SQSQueue
     if STAGE:
+        
+        SQSQueue = 'OCRQueue.fifo'
         print('SoniaDebug: this is elastic beanstalk env')
         return False
+    SQSQueue = 'OCRQueue-cloud9.fifo'
     print('SoniaDebug: this is local env we will use sqlite for logins')
     return True
 
 
-isLocal()
-# Image manipulation page
-thread = Thread(target = processOCRQueue)
-thread.start()
+
 
 @app.route("/")
 def index():
