@@ -378,5 +378,11 @@ def logout():
     return redirect(url_for('intro'))
 
 
+# if __name__ == "__main__":
+#     app.run(host='0.0.0.0', debug=True)
+
+
+#look for a main module
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+        my_port = int(os.environ.get("PORT", 8080)) 
+        app.run(host=os.environ['IP'], port = my_port, debug = True)

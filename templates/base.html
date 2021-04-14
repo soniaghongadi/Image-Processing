@@ -13,7 +13,7 @@
     <link href="../static/jumbotron-narrow.css" rel="stylesheet">
 
     <link href="../static/style.css" rel="stylesheet">
- 
+    
 </head>
 
 <body>
@@ -23,24 +23,24 @@
             <nav class="navbar">
                 <div class="container">
 
-                    <div id="navbarMenuHeroA" class="navbar-menu">
+                    <div id="navbarMenuHeroA" class="navbar-menu" style="font-size:2.5rem">
                         <div class="navbar-end">
                             {% if session['user_email'] %}
                             <a class="navbar-item">Hello, {% print(session['user_email']) %}</a>
                             {% endif %}
 
-                            <a href="{{ url_for('index') }}" class="navbar-item">
+                            <a href="{{ url_for('index') }}" class="navbar-item" style="font-size:2.5rem">
                                 Home
                             </a>
                             {% if not session['user_email'] %}
-                            <a href="{{ url_for('login') }}" class="navbar-item">
+                            <a href="{{ url_for('login') }}" class="navbar-item" style="font-size:2.5rem">
                                 Login
                             </a>
-                            <a href="{{ url_for('register') }}" class="navbar-item">
+                            <a href="{{ url_for('register') }}" class="navbar-item" style="font-size:2.5rem">
                                 Sign Up
                             </a>
                             {% else %}
-                            <a href="{{ url_for('logout') }}" class="navbar-item">
+                            <a href="{{ url_for('logout') }}" class="navbar-item"style="font-size:2.5rem">
                                 Logout
                             </a>
                             {% endif %}
@@ -58,14 +58,6 @@
         </div>
     </section>
     
-  <footer class="footer">
-    <div class="content has-text-centered">
-      <p>
-        <strong>Bulma - Blog theme</strong> by <a href="https://gonzalojs.com">Gonzalo Gutierrez</a>. Based on the <a href="http://jigsaw-blog-staging.tighten.co/">jigsaw-blog</a>. The source code is licensed
-        <a href="http://opensource.org/licenses/mit-license.php">MIT</a>
-      </p>
-    </div>
-  </footer>
 </body>
 
 </html>
