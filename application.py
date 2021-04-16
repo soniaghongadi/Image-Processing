@@ -49,6 +49,7 @@ dynamodb_resource = boto3.resource('dynamodb',region_name='us-east-1')
 table = dynamodb_resource.Table('userdata')
 ocr_table = dynamodb_resource.Table('OCR')
 REGISTER_PAGE = 'signup.html' 
+ERROR_PAGE = "error.html"
 # S3 functionality
 UPLOAD_FOLDER = "uploads"
 BUCKET = "image-processing-sonia"
@@ -120,7 +121,7 @@ def upload():
     if (ext == ".jpg") or (ext == ".png") or (ext == ".bmp"):
         print("File accepted")
     else:
-        return render_template("error.html", message="The selected file is not supported"), 400
+        return render_template(ERROR_PAGE, message="The selected file is not supported"), 400
 
     # save file
     destination = "/".join([target, filename])
@@ -196,7 +197,7 @@ def flip():
     elif 'vertical' in request.form['mode']:
         mode = 'vertical'
     else:
-        return render_template("error.html", message="Mode not supported (vertical - horizontal)"), 400
+        return render_template(ERROR_PAGE, message="Mode not supported (vertical - horizontal)"), 400
     filename = request.form['image']
 
     # open and process image
@@ -264,7 +265,7 @@ def crop():
         img.save(destination)
         return send_image('temp.png')
     else:
-        return render_template("error.html", message="Crop dimensions not valid") 
+        return render_template(ERROR_PAGE, message="Crop dimensions not valid") 
         #400
     # return '', 204
 
