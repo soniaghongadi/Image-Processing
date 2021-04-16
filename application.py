@@ -18,11 +18,13 @@ from s3_helper import S3Utils
 import json
 import atexit
 from credential_helper import get_secret 
+from flask_wtf.csrf import CSRFProtect
 
 
 
 application = app = Flask(__name__)
-
+csrf = CSRFProtect()
+csrf.init_app(app)
 api = Api(application)
 
 
@@ -34,9 +36,8 @@ api.add_resource(CropImage, '/crop')
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app.config['SECRET_KEY'] = 'sonia-ghongadi-top-secrete'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-csrf = CSRFProtect()
-csrf.init_app(app)
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+
 
 STAGE = None
 if 'STAGE_LOCATION' in os.environ:
