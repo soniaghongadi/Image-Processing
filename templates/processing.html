@@ -66,18 +66,19 @@
          <section class="section">
              <h3>OCR Queue</h3>
         <table class="table">
+           <caption hidden>OCRQueue</caption>
               <thead>
                 <tr>
-                  <th><abbr title="Position">ImageTag</abbr></th>
-                  <th>Image URL </th>
-                  <th>Status </th>
-                  <th>Extracted Text </th>
+                  <th id="imageTag"><abbr title="Position">ImageTag</abbr></th>
+                  <th id="imageURL">Image URL </th>
+                  <th id="status">Status </th>
+                  <th id="extracted_text">Extracted Text </th>
                 </tr>
               </thead>
               <tbody>
                {% for item in ocrqueue %}
                 <tr>
-                  <th>{{ item.imageTag }}</th>
+                  <th id="imagetag">{{ item.imageTag }}</th>
                   <td>{{ item.imageURL }}</td>
                   <td>{{ item.status }}</td>
                   <td>{{ item.extracted_text }}</td>
