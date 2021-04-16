@@ -263,8 +263,9 @@ def crop():
         img.save(destination)
         return send_image('temp.png')
     else:
-        return render_template("error.html", message="Crop dimensions not valid"), 400
-    return '', 204
+        return render_template("error.html", message="Crop dimensions not valid") 
+        #400
+    # return '', 204
 
 
 # blend filename with stock photo and alpha parameter
