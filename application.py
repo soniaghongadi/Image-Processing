@@ -50,6 +50,7 @@ table = dynamodb_resource.Table('userdata')
 ocr_table = dynamodb_resource.Table('OCR')
 REGISTER_PAGE = 'signup.html' 
 ERROR_PAGE = "error.html"
+STATIC_IMAGE = 'static/images'
 # S3 functionality
 UPLOAD_FOLDER = "uploads"
 BUCKET = "image-processing-sonia"
@@ -137,7 +138,7 @@ def addocr():
     # retrieve parameters from html form
     filename = request.args.get('image')
     # open and process image
-    target = os.path.join(APP_ROOT, 'static/images')
+    target = os.path.join(APP_ROOT, STATIC_IMAGE)
     destination = "/".join([target, filename])
     
     imageID= uuid.uuid4().hex
@@ -172,7 +173,7 @@ def rotate():
     filename = request.form['image']
 
     # open and process image
-    target = os.path.join(APP_ROOT, 'static/images')
+    target = os.path.join(APP_ROOT, STATIC_IMAGE)
     destination = "/".join([target, filename])
 
     img = Image.open(destination)
@@ -201,7 +202,7 @@ def flip():
     filename = request.form['image']
 
     # open and process image
-    target = os.path.join(APP_ROOT, 'static/images')
+    target = os.path.join(APP_ROOT, STATIC_IMAGE)
     destination = "/".join([target, filename])
 
     img = Image.open(destination)
@@ -231,7 +232,7 @@ def crop():
     filename = request.form['image']
 
     # open image
-    target = os.path.join(APP_ROOT, 'static/images')
+    target = os.path.join(APP_ROOT, STATIC_IMAGE)
     destination = "/".join([target, filename])
 
     img = Image.open(destination)
@@ -278,7 +279,7 @@ def blend():
     filename1 = request.form['image']
 
     # open images
-    target = os.path.join(APP_ROOT, 'static/images')
+    target = os.path.join(APP_ROOT, STATIC_IMAGE)
     filename2 = 'blend.jpg'
     destination1 = "/".join([target, filename1])
     destination2 = "/".join([target, filename2])
