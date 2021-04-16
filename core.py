@@ -8,6 +8,8 @@ app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_IMAGE = 'static/images'
+ERROR = "error.html"
+TEMP_IMG = 'temp.png'
 
 
 # default access redirects to API documentation
@@ -23,7 +25,7 @@ def rotate(angle, filename):
     # check for valid angle
     angle = int(angle)
     if not -360 < angle < 360:
-        return render_template("error.html", message="Invalid angle parameter (-359 to 359)"), 400
+        return render_template(ERROR, message="Invalid angle parameter (-359 to 359)"), 400
 
     # open and process image
     target = os.path.join(APP_ROOT, STATIC_IMAGE)
@@ -33,12 +35,12 @@ def rotate(angle, filename):
     img = img.rotate(-1*angle)
 
     # save and return image
-    destination = "/".join([target, 'temp.png'])
+    destination = "/".join([target, TEMP_IMG])
     if os.path.isfile(destination):
         os.remove(destination)
     img.save(destination)
 
-    return send_image('temp.png')
+    return send_image(TEMP_IMG)
 
 
 # flip filename 'vertical' or 'horizontal'
@@ -57,15 +59,15 @@ def flip(mode, filename):
     elif mode == 'vertical':
         img = img.transpose(Image.FLIP_TOP_BOTTOM)
     else:
-        return render_template("error.html", message="Invalid mode (vertical or horizontal)"), 400
+        return render_template(ERROR, message="Invalid mode (vertical or horizontal)"), 400
 
     # save and return image
-    destination = "/".join([target, 'temp.png'])
+    destination = "/".join([target, TEMP_IMG])
     if os.path.isfile(destination):
         os.remove(destination)
     img.save(destination)
 
-    return send_image('temp.png')
+    return send_image(TEMP_IMG)
 
 
 # crop filename from (x1,y1) to (x2,y2)
@@ -110,15 +112,15 @@ def crop(x1, y1, x2, y2, filename):
     if crop_possible:
         img = img.crop((x1, y1, x2, y2))
     else:
-        return render_template("error.html", message="Crop dimensions not valid"), 400
+        return render_template(ERROR, message="Crop dimensions not valid"), 400
 
     # save and return image
-    destination = "/".join([target, 'temp.png'])
+    destination = "/".join([target, TEMP_IMG])
     if os.path.isfile(destination):
         os.remove(destination)
     img.save(destination)
 
-    return send_image('temp.png')
+    return send_image(TEMP_IMG)
 
 
 # blend filename1 and filename2 with alpha parameter
@@ -128,7 +130,7 @@ def blend(alpha, filename1, filename2):
     # check for valid alpha
     alpha = float(alpha)
     if not 0 <= alpha <= 100:
-        return render_template("error.html", message="Invalid alpha value (0-100)"), 400
+        return render_template(ERROR, message="Invalid alpha value (0-100)"), 400
 
     #open images
     target = os.path.join(APP_ROOT, STATIC_IMAGE)
@@ -155,12 +157,12 @@ def blend(alpha, filename1, filename2):
     img = Image.blend(img1, img2, float(alpha)/100)
 
     # save and return
-    destination = "/".join([target, 'temp.png'])
+    destination = "/".join([target, TEMP_IMG])
     if os.path.isfile(destination):
         os.remove(destination)
     img.save(destination)
 
-    return send_image('temp.png')
+    return send_image(TEMP_IMG)
 
 
 # retrieve file from 'static/images' directory
@@ -168,6 +170,3 @@ def blend(alpha, filename1, filename2):
 def send_image(filename):
     return send_from_directory("static/images", filename)
 
-
-# if __name__ == "__main__":
-#     app.run()
