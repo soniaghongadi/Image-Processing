@@ -198,7 +198,7 @@ def flip():
     elif 'vertical' in request.form['mode']:
         mode = 'vertical'
     else:
-        return render_template(ERROR_PAGE, message="Mode not supported (vertical - horizontal)"), 400
+        return render_template(ERROR_PAGE, message="Mode not supported (vertical - horizontal)") 
     filename = request.form['image']
 
     # open and process image
@@ -267,8 +267,6 @@ def crop():
         return send_image('temp.png')
     else:
         return render_template(ERROR_PAGE, message="Crop dimensions not valid") 
-        #400
-    # return '', 204
 
 
 # blend filename with stock photo and alpha parameter
@@ -381,9 +379,6 @@ def logout():
     session.pop('user_email', None)
     return redirect(url_for('intro'))
 
-
-# if __name__ == "__main__":
-#     app.run(host='0.0.0.0', debug=True)
 
 
 #look for a main module

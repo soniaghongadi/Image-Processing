@@ -7,6 +7,7 @@ from PIL import Image
 app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+STATIC_IMAGE = 'static/images'
 
 
 # default access redirects to API documentation
@@ -25,7 +26,7 @@ def rotate(angle, filename):
         return render_template("error.html", message="Invalid angle parameter (-359 to 359)"), 400
 
     # open and process image
-    target = os.path.join(APP_ROOT, 'static/images')
+    target = os.path.join(APP_ROOT, STATIC_IMAGE)
     destination = "/".join([target, filename])
 
     img = Image.open(destination)
@@ -45,7 +46,7 @@ def rotate(angle, filename):
 def flip(mode, filename):
 
     # open and process image
-    target = os.path.join(APP_ROOT, 'static/images')
+    target = os.path.join(APP_ROOT, STATIC_IMAGE)
     destination = "/".join([target, filename])
 
     img = Image.open(destination)
@@ -72,7 +73,7 @@ def flip(mode, filename):
 def crop(x1, y1, x2, y2, filename):
 
     # open image
-    target = os.path.join(APP_ROOT, 'static/images')
+    target = os.path.join(APP_ROOT, STATIC_IMAGE)
     destination = "/".join([target, filename])
 
     img = Image.open(destination)
@@ -130,7 +131,7 @@ def blend(alpha, filename1, filename2):
         return render_template("error.html", message="Invalid alpha value (0-100)"), 400
 
     #open images
-    target = os.path.join(APP_ROOT, 'static/images')
+    target = os.path.join(APP_ROOT, STATIC_IMAGE)
     destination1 = "/".join([target, filename1])
     destination2 = "/".join([target, filename2])
 
