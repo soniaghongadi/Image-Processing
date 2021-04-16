@@ -19,16 +19,16 @@
             <caption hidden>OCRQueue</caption>
               <thead>
                 <tr>
-                  <th><abbr title="Position">ImageTag</abbr></th>
-                  <th>Image URL </th>
-                  <th>Status </th>
-                  <th>Extracted Text </th>
+                  <th id="tag"><abbr title="Position">ImageTag</abbr></th>
+                  <th id="url">Image URL </th>
+                  <thid="status">Status </th>
+                  <th id="extracted_text">Extracted Text </th>
                 </tr>
               </thead>
               <tbody>
                {% for item in ocrqueue %}
                 <tr>
-                  <th>{{ item.imageTag }}</th>
+                  <th id="item_tag">{{ item.imageTag }}</th>
                   <td>{{ item.imageURL }}</td>
                   <td>{{ item.status }}</td>
                   <td>{{ item.extracted_text }}</td>
