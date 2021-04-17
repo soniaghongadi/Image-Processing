@@ -27,16 +27,67 @@ csrf = CSRFProtect()
 csrf.init_app(app)
 api = Api(application)
 
+REGISTER_PAGE = 'signup.html' 
+ERROR_PAGE = "error.html"
+STATIC_IMAGE = 'static/images'
 
 class CropImage(Resource):
-    def get(self):
-        return {'hello': 'world'}
+    # def get(self):
+    #     return {'hello': 'world'}
+    def crop(x1, y1, x2, y2, filename):
+
+    # open image
+        target = os.path.join(APP_ROOT, STATIC_IMAGE)
+        destination = "/".join([target, filename])
+    
+        img = Image.open(destination)
+        width = img.size[0]
+        height = img.size[1]
+    
+        # check for valid crop parameters
+        [x1, y1, x2, y2] = [int(x1), int(y1), int(x2), int(y2)]
+    
+        crop_possible = True
+    
+        while True:
+            if not 0 <= x1 < width:
+                crop_possible = False
+                break
+            if not 0 < x2 <= width:
+                crop_possible = False
+                break
+            if not 0 <= y1 < height:
+                crop_possible = False
+                break
+            if not 0 < y2 <= height:
+                crop_possible = False
+                break
+            if not x1 < x2:
+                crop_possible = False
+                break
+            if not y1 < y2:
+                crop_possible = False
+                break
+            break
+
+    # process image
+        if crop_possible:
+            img = img.crop((x1, y1, x2, y2))
+        else:
+            return render_template(ERROR_PAGE, message="Crop dimensions not valid"), 400
+    
+        # save and return image
+        destination = "/".join([target, 'temp.png'])
+        if os.path.isfile(destination):
+            os.remove(destination)
+        img.save(destination)
+
+        return send_image('temp.png')
 
 api.add_resource(CropImage, '/crop')
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app.config['SECRET_KEY'] = 'sonia-ghongadi-top-secrete'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
 
 STAGE = None
@@ -48,9 +99,7 @@ if 'STAGE_LOCATION' in os.environ:
 dynamodb_resource = boto3.resource('dynamodb',region_name='us-east-1')
 table = dynamodb_resource.Table('userdata')
 ocr_table = dynamodb_resource.Table('OCR')
-REGISTER_PAGE = 'signup.html' 
-ERROR_PAGE = "error.html"
-STATIC_IMAGE = 'static/images'
+
 # S3 functionality
 UPLOAD_FOLDER = "uploads"
 BUCKET = "image-processing-sonia"
