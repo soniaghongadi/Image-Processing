@@ -19,14 +19,6 @@ class S3Utils:
         
     @staticmethod
     def create_bucket(bucket_name, region=None):
-        """Create an S3 bucket in a specified region
-
-        If a region is not specified, the bucket is created in the S3 default region (us-east-1).
-
-        :param bucket_name: Bucket to create
-        :param region: String region to create bucket in, e.g., 'us-west-2'
-        :return: True if bucket created, else False
-        """
 
         # Create bucket
         try:
@@ -67,13 +59,6 @@ class S3Utils:
 
     @staticmethod
     def upload_file(bucket, file_name, object_name=None):
-        """Upload a file to an S3 bucket
-
-        :param file_name: File to upload
-        :param bucket: Bucket to upload to
-        :param object_name: S3 object name. If not specified then file_name is used
-        :return: True if file was uploaded, else False
-        """
 
         # If S3 object_name was not specified, use file_name
         if object_name is None:
@@ -101,12 +86,6 @@ class S3Utils:
         
     @staticmethod
     def get_object(bucket_name, object_key):
-        """Retrieves a given object from a S3 bucket
-    
-        :param bucket_name: the name of the bucket to retrieve the object from
-        :param object_key: the key of the object to retrieve (the key uniquely identifies the object in a bucket)
-        :return: True if operation successful, otherwise False
-        """
         try:
             s3_client = S3Utils.get_S3_client()
             response = s3_client.get_object(Bucket=bucket_name, Key=object_key)
@@ -120,11 +99,6 @@ class S3Utils:
     
     @staticmethod
     def list_objects_from_a_bucket(bucket_name):
-        """List/Display all the objects from a given S3 bucket
-    
-        :param bucket_name: the name of the bucket
-        :return: True if operation successful, otherwise False
-        """
         
         items = []
         try:
@@ -154,15 +128,7 @@ class S3Utils:
     """
     @staticmethod
     def download_object(bucket_name, object_key, filename):
-        """Download a given object to a file
-    
-        :param bucket_name: the name of the bucket to download from
-        :param object_key: the key of the object to download (the key uniquely identifies the object in a bucket)
-        :param filename: the name of the file (including complete path to the file) to download to
-        :return: True if operation successful, otherwise False
-        """
-    
-        
+        #Download a given object to a file
         try:
             s3_client = S3Utils.get_S3_client()
             #print('\nDownloading', object_key, 'from S3 bucket', bucket_name, 'to file', filename, '...')
@@ -174,10 +140,6 @@ class S3Utils:
         return True 
   
      
- 
-    
-    
-    
 def main():
     import argparse
     parser = argparse.ArgumentParser()

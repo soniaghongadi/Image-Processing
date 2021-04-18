@@ -95,7 +95,7 @@ if 'STAGE_LOCATION' in os.environ:
     # can be either empty or set to ELASTICBEANSTALK
     STAGE = os.environ['STAGE_LOCATION']
 
-
+# DynamoDB functionality
 dynamodb_resource = boto3.resource('dynamodb',region_name='us-east-1')
 table = dynamodb_resource.Table('userdata')
 ocr_table = dynamodb_resource.Table('OCR')
@@ -131,6 +131,7 @@ class OCRItem:
     self.status = status
     self.extracted_text = extracted_text
 
+# Home Page
 @app.route("/")
 def index():
     isLocal()
@@ -145,14 +146,15 @@ def index():
             ocrqueue.append(imageTag)
         return render_template('index.html', ocrqueue = ocrqueue)
     return redirect(url_for('intro'))
-    
+
+# Home Page    
 @app.route("/intro")
 def intro():
     isLocal()
     return render_template('intro.html')
 
 
-# upload an image and save it to local directory
+# Upload an image and save it to local directory
 @app.route("/upload", methods=["POST"])
 def upload():
     target = os.path.join(APP_ROOT, 'static/images/')
@@ -182,6 +184,7 @@ def upload():
     # forward to processing page
     return render_template("processing.html", image_name=filename, )
 
+# Add Image to OCR 
 @app.route("/addocr", methods=["GET"])
 def addocr():
     # retrieve parameters from html form
@@ -214,7 +217,7 @@ def addocr():
 
     return redirect(url_for('index'))
 
-# rotate the image to the specified degrees
+# Rotate the image to the specified degrees
 @app.route("/rotate", methods=["POST"])
 def rotate():
     # retrieve parameters from html form
@@ -237,7 +240,7 @@ def rotate():
     return send_image('temp.png')
 
 
-# flip filename 'vertical' or 'horizontal'
+# Flip image 'vertical' or 'horizontal'
 @app.route("/flip", methods=["POST"])
 def flip():
 
@@ -270,7 +273,7 @@ def flip():
     return send_image('temp.png')
 
 
-# crop filename from (x1,y1) to (x2,y2)
+# Crop image from (x1,y1) to (x2,y2)
 @app.route("/crop", methods=["POST"])
 def crop():
     # retrieve parameters from html form
@@ -318,7 +321,7 @@ def crop():
         return render_template(ERROR_PAGE, message="Crop dimensions not valid") 
 
 
-# blend filename with stock photo and alpha parameter
+# Blend image with stock photo and alpha parameter
 @app.route("/blend", methods=["POST"])
 def blend():
     # retrieve parameters from html form

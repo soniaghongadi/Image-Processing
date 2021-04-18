@@ -31,19 +31,6 @@ def ocr_with_library(url):
     api.ocr_url(url)
 
 def ocr_space_url(url):
-    """ OCR.space API request with remote file.
-        Python3.5 - not tested on 2.7
-    :param url: Image url.
-    :param overlay: Is OCR.space overlay required in your response.
-                    Defaults to False.
-    :param api_key: OCR.space API key.
-                    Defaults to 'helloworld'.
-    :param language: Language code to be used in OCR.
-                    List of available language codes can be found on https://ocr.space/OCRAPI
-                    Defaults to 'en'.
-    :return: Result in JSON format.
-    """
-
     payload = {'url': url,
                'apikey': ocr_space_key,
                'filetype': 'png'
@@ -52,7 +39,6 @@ def ocr_space_url(url):
                       data=payload,
                       )
     return r.content.decode()
-
 
 def processOCRQueue(queue_name):
     # Get the service resource
