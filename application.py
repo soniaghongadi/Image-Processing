@@ -120,7 +120,7 @@ def isLocal():
         print('SoniaDebug: this is elastic beanstalk env')
         return False
     SQSQueue = 'OCRQueue-cloud9.fifo'
-    print('SoniaDebug: this is local env we will use sqlite for logins')
+    print('SoniaDebug: this is local env')
     return True
 
 
